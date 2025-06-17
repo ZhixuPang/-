@@ -1,0 +1,71 @@
+以下是为**全基因组重测序分析（WGS）**整合构建 Conda 环境的完整命令，涵盖了从**数据质控**、**比对**、**变异检测**到**SNP注释**的主流工具，适用于**人类或非模式生物（如绵羊）**。
+
+---
+
+## ✅ Conda 创建整合环境命令：
+
+```bash
+conda create -n wgs \
+  -c bioconda -c conda-forge \
+  fastp \
+  multiqc \
+  bwa \
+  minimap2 \
+  samtools \
+  picard \
+  bedtools \
+  htslib \
+  gatk4 \
+  bcftools \
+  freebayes \
+  vcftools \
+  plink \
+  snpeff \
+  snpsift \
+  ensembl-vep
+```
+
+---
+
+## 🧰 工具功能概览：
+
+| 类别    | 工具                                 | 功能说明             |
+| ----- | ---------------------------------- | ---------------- |
+| 质控 QC | fastp, multiqc                     | 质控、过滤、汇总报告       |
+| 比对    | bwa, minimap2                      | WGS读取到参考基因组的比对   |
+| BAM处理 | samtools, picard, bedtools, htslib | 排序、去重、提取区域、深度统计等 |
+| 变异检测  | gatk4, freebayes, bcftools         | 检测SNP/InDel变异    |
+| VCF处理 | vcftools, plink, bcftools          | 变异格式过滤、统计、群体分析   |
+| SNP注释 | snpeff, snpsift, ensembl-vep       | SNP功能注释，影响预测     |
+
+---
+
+## 📦 激活环境
+
+```bash
+conda activate wgs
+```
+
+---
+
+## 🛠 可选：为非模式生物构建 SnpEff 注释数据库（如绵羊）
+
+构建指令示意（需准备 GTF + FASTA）：
+
+```bash
+# 假设你已有参考基因组 fasta 与注释 gtf
+# 文件名示例：Ovis_aries.fa 和 Ovis_aries.gtf
+
+mkdir -p ~/.conda/envs/wgs/share/snpeff/data/Ovis_aries
+
+cp Ovis_aries.fa ~/.conda/envs/wgs/share/snpeff/data/Ovis_aries/sequences.fa
+cp Ovis_aries.gtf ~/.conda/envs/wgs/share/snpeff/data/Ovis_aries/genes.gtf
+
+# 编辑 snpEff.config 添加一行：
+# Ovis_aries.genome : Ovis_aries
+
+# 然后构建数据库
+snpEff build -gtf22 -v Ovis_aries
+```
+
+
